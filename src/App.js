@@ -3,10 +3,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import MovieList from './components/MovieList';
 import MovieListHeading from './components/MovieListHeading';
-import SearchBox from './components/SearchBox';
+
 import AddFavourites from './components/AddFavourites';
 import RemoveFavourites from './components/RemoveFavourites';
-
+import debounce from 'lodash.debounce';
 const App = () => {
   const [movies, setMovies] = useState([]);
   const [favourites, setFavourites] = useState([]);
@@ -22,6 +22,9 @@ const App = () => {
       setMovies(responseJson.Search);
     }
   };
+  const updateSearchValue = (e) => setSearchValue(e?.target?.value);
+
+  const debouncedOnChange = debounce(updateSearchValue, 1000);
 
   useEffect(() => {
     getMovieRequest(searchValue);
@@ -60,7 +63,13 @@ const App = () => {
     <div className='container-fluid movie-app'>
       <div className='row d-flex align-items-center mt-4 mb-4'>
         <MovieListHeading heading='Movies' />
-        <SearchBox searchValue={searchValue} setSearchValue={setSearchValue} />
+        <div className='col col-sm-4'>
+          <input
+            className='form-control'
+            onChange={debouncedOnChange}
+            placeholder='Type to search...'
+          ></input>
+        </div>
       </div>
       <div className='row'>
         <MovieList
